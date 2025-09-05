@@ -1,34 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Card from './Card'
-import axios from 'axios'
+import { getDocs, addDoc } from '../Util/util'
+import { FaPlus } from "react-icons/fa";
 
 function Foreground() {
-    useEffect(()=>{
-        getDocs()
-    },[])
+    const [data, setData] = useState([]);
+    const ref = useRef(null);
 
-    const [data, setData]=useState([]);
-    const ref=useRef(null);
+    useEffect(() => {
+        fetchDocs();
+    }, [data]);
 
-    const getDocs = async()=>{
-        const response = await axios.get('http://localhost:8080/docs')
-        console.log(response);
-        setData(response.data);
+
+    const fetchDocs = async () => {
+        const res = await getDocs();
+        setData(res.data);
     }
 
-    const deleteDoc = (id)=>{
-        axios.delete(id)
-    }
-    
-  return (
-    <div ref={ref} className='fixed top-0 left-0 z-[3] w-full h-full flex gap-10 flex-wrap py-5'>
-        {
-            data.map((item, id)=>(
-                <Card data={item} reference={ref}/>
-            ))
-        }
-    </div>
-  )
+    return (
+        <div className='relative'>
+            <div ref={ref} className='fixed top-0 left-0 z-[3] w-full h-full flex gap-10 flex-wrap py-5'>
+                {
+                    data.map((item, id) => (
+                        <Card data={item} reference={ref} id={item.id} />
+                    ))
+                }
+            </div>
+            <button className='text-white absolute right-0 cursor-pointer z-[3] m-3 hover:scale-125 ease-in-out duration-500 border-2 rounded-full p-2' onClick={()=>{
+                const doc=prompt("Enter document");
+                addDoc(doc);
+                fetchDocs();
+            }}><FaPlus /></button>  
+        </div>
+    )
 }
 
 export default Foreground
