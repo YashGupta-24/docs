@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class Doc {
     @Id
     private long id;
+    private String title;
     private String desc;
     private String date;
-    private boolean close;
-    private Tag tag;
+    private boolean status;
 }
